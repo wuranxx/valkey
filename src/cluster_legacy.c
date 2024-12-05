@@ -6092,7 +6092,11 @@ unsigned int delKeysInSlot(unsigned int hashslot, int lazy) {
         enterExecutionUnit(1, 0);
         sds sdskey = dictGetKey(de);
         robj *key = createStringObject(sdskey, sdslen(sdskey));
-        int deleted = lazy ? dbAsyncDelete(&server.db[0], key) : dbSyncDelete(&server.db[0], key);
+        if (lazy) {
+            dbAsyncDelete(&server.db[0], key);
+        } else {
+            dbSyncDelete(&server.db[0], key);
+        }
         propagateDeletion(&server.db[0], key, lazy);
         signalModifiedKey(NULL, &server.db[0], key);
         /* The keys are not actually logically deleted from the database, just moved to another node.
