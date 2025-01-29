@@ -3911,7 +3911,7 @@ void afterCommand(client *c) {
 int commandCheckExistence(client *c, sds *err) {
     if (c->cmd) return 1;
     if (!err) return 0;
-    if (isContainerCommandBySds(c->argv[0]->ptr)) {
+    if (isContainerCommandBySds(c->argv[0]->ptr) && c->argc >= 2) {
         /* If we can't find the command but argv[0] by itself is a command
          * it means we're dealing with an invalid subcommand. Print Help. */
         sds cmd = sdsnew((char *)c->argv[0]->ptr);
@@ -4024,7 +4024,6 @@ int processCommand(client *c) {
             rejectCommandSds(c, err);
             return C_OK;
         }
-
 
         /* Check if the command is marked as protected and the relevant configuration allows it */
         if (c->cmd->flags & CMD_PROTECTED) {
