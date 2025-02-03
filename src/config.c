@@ -542,8 +542,10 @@ void loadServerConfigFromString(char *config) {
 
             /* Otherwise we re-add the command under a different name. */
             if (sdslen(argv[2]) != 0) {
-                sdsfree(cmd->fullname);
-                cmd->fullname = sdsdup(argv[2]);
+                if (cmd->current_name != cmd->fullname) {
+                    sdsfree(cmd->current_name);
+                }
+                cmd->current_name = sdsdup(argv[2]);
                 if (!hashtableAdd(server.commands, cmd)) {
                     err = "Target command name already exists";
                     goto loaderr;
