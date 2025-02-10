@@ -4189,7 +4189,7 @@ void clientTrackingInfoCommand(client *c) {
 
     /* Prefixes */
     addReplyBulkCString(c, "prefixes");
-    if (c->pubsub_data->client_tracking_prefixes) {
+    if (c->flag.tracking && c->pubsub_data->client_tracking_prefixes) {
         addReplyArrayLen(c, raxSize(c->pubsub_data->client_tracking_prefixes));
         raxIterator ri;
         raxStart(&ri, c->pubsub_data->client_tracking_prefixes);
